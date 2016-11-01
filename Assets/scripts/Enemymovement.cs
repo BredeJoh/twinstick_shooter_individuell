@@ -10,12 +10,14 @@ public class Enemymovement : MonoBehaviour {
     private float rotationSpeed;
     private float randomShootspeed;
     public float fart;
+    public GameObject firepoint;
+    public int ProjectilesPerShot = 1;
     [Range(0.5f, 3.0f)]
     public float moveDeadZone;
     public Vector3 dist;
     public Vector3 Rad;
     public float disty;
-   // [HideInInspector]
+    [HideInInspector]
     public int health;
     public int maxHealth = 100;
     public bool isKamikaze = false;
@@ -59,6 +61,22 @@ public class Enemymovement : MonoBehaviour {
             transform.RotateAround(spiller.transform.position, Vector3.forward, 5 * rotationSpeed * Time.deltaTime);
         else
             transform.RotateAround(spiller.transform.position, Vector3.back, 5 * rotationSpeed * Time.deltaTime);
+    }
+    void LookAtPlayer()
+    {
+        Vector3 enemyToPlayer = new Vector3(0f, 0f, 0f);
+        GameObject body2D = GameObject.FindGameObjectWithTag("Player");
+        enemyToPlayer = body2D.transform.position - transform.position;
+        float angle = Mathf.Sqrt((enemyToPlayer.x * enemyToPlayer.x) + (enemyToPlayer.y * enemyToPlayer.y));
+        angle = Mathf.Atan2(enemyToPlayer.x, enemyToPlayer.y);
+        if (angle < 0)
+        {
+            angle = Mathf.PI * 2 + angle;
+        }
+        angle = (angle * 360) / (Mathf.PI * 2);
+        angle = 360 - angle;
+        transform.eulerAngles = new Vector3(0f, 0f, angle);
+
     }
     void dropPickup(pickups pickup)
     {
@@ -107,9 +125,9 @@ public class Enemymovement : MonoBehaviour {
         }
     }
     // Update is called once per frame
-
     void FixedUpdate()
     {
+        LookAtPlayer();
         distfinder();
         if (health <= 0)
         {
@@ -126,7 +144,6 @@ public class Enemymovement : MonoBehaviour {
 
 
     }
-
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.tag == "Respawn")
@@ -155,10 +172,17 @@ public class Enemymovement : MonoBehaviour {
     IEnumerator Shoot(float WaitTime)
     {
         if (Health.playerHealth != 0)
-        Instantiate(enemylazerprefab, transform.position, transform.rotation);
+        {
+            float angle = 10;
+            for (int i = 0; i < ProjectilesPerShot; i++)
+            {
+                angle *= -1;
+                print(transform.rotation.z);
+                Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
+            }
+        }
         yield return new WaitForSeconds(WaitTime);
         StartCoroutine(Shoot(randomShootspeed));
         
     }
-	
 }
