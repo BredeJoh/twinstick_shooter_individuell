@@ -83,7 +83,7 @@ public class Enemymovement : MonoBehaviour {
         if(Random.Range(1, 15) == 1)
             Instantiate(pickup, gameObject.transform.position, gameObject.transform.rotation);
     }
-    void normalEnemy()
+    void normalEnemy() // Basic AI for basefienden
     {
        
         rotateAroundPlayer();
@@ -91,7 +91,7 @@ public class Enemymovement : MonoBehaviour {
             fart = 4.0f;
         else
             fart = 2.0f;
-        if (dist.magnitude >= randomDistance + (moveDeadZone/2)) //stopper å bevege seg mot spiller når den er innenfor en viss distanse
+        if (dist.magnitude >= randomDistance + (moveDeadZone/2)) 
         {
             moveTowards();
         }
@@ -100,7 +100,7 @@ public class Enemymovement : MonoBehaviour {
             moveAway();
         }
     }
-    void Kamikaze()
+    void Kamikaze() // basic Ai for kamikaze fienden
     {      
         if (dist.magnitude >= 10.0f)
             fart = 4.0f;
@@ -109,7 +109,7 @@ public class Enemymovement : MonoBehaviour {
         if (health >= (int)maxHealth / 2)
         {
             rotateAroundPlayer();
-            if (dist.magnitude >= randomDistance + (moveDeadZone/2)) //stopper å bevege seg mot spiller når den er innenfor en viss distanse
+            if (dist.magnitude >= randomDistance + (moveDeadZone/2)) 
             {
                 moveTowards();
             }
