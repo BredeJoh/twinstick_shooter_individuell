@@ -28,7 +28,7 @@ public class Wave_spawn : MonoBehaviour {
     void Start () {
         
         waveNumber = 1;
-        enemiesThisRound = 50; // 10
+        enemiesThisRound = 20; // 50
         StartCoroutine(spawn(spawnSpeed));
         randomEnemy = enemyPrefab;
         enemyPrefab.GetComponent<Enemymovement>().maxHealth = 50;
@@ -47,7 +47,7 @@ public class Wave_spawn : MonoBehaviour {
             randomEnemy = enemyPrefab;
         else if (randomEnemyType > 6 && randomEnemyType < 10)
             randomEnemy = enemyPrefab2;
-        else if (randomEnemyType > 9)
+        else if (randomEnemyType > 9 && waveNumber > 2)
             randomEnemy = enemyPrefab3;
 
         spawnInViewPort = cam.WorldToViewportPoint(new Vector3(randomX, randomY, 0f));
@@ -102,8 +102,8 @@ public class Wave_spawn : MonoBehaviour {
             canSpawn = false;
         }
         yield return new WaitForSeconds(WaitTime);
-        if (currentEnemies > maxEnemies/2)
-            StartCoroutine(spawn(spawnSpeed*2));
+        if (currentEnemies > maxEnemies/1.5f)
+            StartCoroutine(spawn(spawnSpeed*1.5f));
         else
             StartCoroutine(spawn(spawnSpeed));
 

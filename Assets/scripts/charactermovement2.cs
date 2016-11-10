@@ -15,6 +15,7 @@ public class charactermovement2 : MonoBehaviour {
     public Weapon weapon1;
     public Weapon weapon2;
     public Weapon weapon3;
+    public int shield = 1;
 
     // Use this for initialization
     void Start()
@@ -25,6 +26,10 @@ public class charactermovement2 : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (shield == 0)
+            GetComponent<SpriteRenderer>().color = Color.blue;
+        else
+            GetComponent<SpriteRenderer>().color = Color.white;
         if (godmode)
             Health.playerHealth = 9999;
         var v3 = Input.mousePosition;
@@ -67,11 +72,13 @@ public class charactermovement2 : MonoBehaviour {
     {
         if (other.gameObject.tag == "enemylazer")
         {
-            Health.playerHealth--;
+            Health.playerHealth -= 1*shield;
         }
         if (other.gameObject.tag == "enemy")
         {
-            Health.playerHealth--;
+            Health.playerHealth -= 3*shield;
+            other.gameObject.transform.parent.GetComponent<Enemymovement>().Die();
+            Points.score--;
             Destroy(other.transform.parent.gameObject);
         }
         if (Health.playerHealth <= 0)
@@ -83,7 +90,7 @@ public class charactermovement2 : MonoBehaviour {
     {
         if (other.gameObject.tag == "enemy")
         {
-            Health.playerHealth--;
+            Health.playerHealth -= 3;
             Destroy(other.gameObject);
         }
         if (Health.playerHealth <= 0)

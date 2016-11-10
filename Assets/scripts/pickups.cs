@@ -18,7 +18,7 @@ public class pickups : MonoBehaviour {
     public float speedIncrease;
     [Range(1, 5)]
     public int fireRateMultiplier;
-
+    public bool invincibility = false;
     private GameObject player;
 
 
@@ -40,6 +40,8 @@ public class pickups : MonoBehaviour {
         player.GetComponent<charactermovement2>().weapon1.fireDelay /= fireRateMultiplier;
         player.GetComponent<charactermovement2>().weapon2.fireDelay /= fireRateMultiplier;
         player.GetComponent<charactermovement2>().weapon3.fireDelay /= fireRateMultiplier;
+        if(invincibility)
+            player.GetComponent<charactermovement2>().shield = 0;
 
         yield return new WaitForSeconds(waitTime);
 
@@ -48,6 +50,7 @@ public class pickups : MonoBehaviour {
         player.GetComponent<charactermovement2>().weapon1.fireDelay *= fireRateMultiplier;
         player.GetComponent<charactermovement2>().weapon2.fireDelay *= fireRateMultiplier;
         player.GetComponent<charactermovement2>().weapon3.fireDelay *= fireRateMultiplier;
+        player.GetComponent<charactermovement2>().shield = 1;
 
         Destroy(gameObject);
     }
@@ -56,7 +59,6 @@ public class pickups : MonoBehaviour {
         if (other.gameObject.tag == "Player")
         {
             player = other.gameObject;
-            print("hei");
             StartCoroutine(isPickedUpReset(BonusTime));
             gameObject.GetComponent<BoxCollider>().enabled = false;
             gameObject.GetComponent<SpriteRenderer>().enabled = false;

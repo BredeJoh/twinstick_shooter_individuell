@@ -64,6 +64,8 @@ public class Weapon : MonoBehaviour {
         projectileSpeed += projectileSpeedPerLevel;
         projectileLifetime += ProjectileLifetimePerLevel;
         size += new Vector3(projectileSizeIncrease, projectileSizeIncrease, 0f);
+        //projectile.GetComponent<TrailRenderer>().startWidth += projectileSizeIncrease;
+        //projectile.GetComponent<TrailRenderer>().endWidth += projectileSizeIncrease/2;
         if (WeaponLevel % 5 == 0)
         {
             projectilesPerShot += MoreProjectiles;
@@ -96,6 +98,8 @@ public class Weapon : MonoBehaviour {
         {
             newProjectile = Instantiate(projectile, firePoint.position, player.transform.rotation) as GameObject;
             newProjectile.transform.localScale += size;
+            newProjectile.GetComponent<TrailRenderer>().startWidth += size.x;
+            newProjectile.GetComponent<TrailRenderer>().endWidth += size.y / 4;
         }
 		StartCoroutine (Cooldown (fireDelay));
 	}

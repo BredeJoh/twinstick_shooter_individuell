@@ -91,7 +91,7 @@ public class Enemymovement : MonoBehaviour {
             Instantiate(pickup, gameObject.transform.position, gameObject.transform.rotation);
     }
 
-    void Die()
+    public void Die()
     {
         if (!isTank || runtimes > 1)
         {
@@ -207,7 +207,7 @@ public class Enemymovement : MonoBehaviour {
             float angle = 10;
             for (int i = 0, x = 0; i < ProjectilesPerShot; i++)
             {
-                print(transform.rotation.z);
+                
                 if (i == 0)
                     Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
                 else if (i % 2 != 0)
@@ -227,12 +227,9 @@ public class Enemymovement : MonoBehaviour {
     IEnumerator ShootManyOnce(int projectileCount)
     {
         runtimes++;
-        //gameObject.GetComponent<SpriteRenderer>().enabled = false;
-        //gameObject.GetComponent<CircleCollider2D>().enabled = false;
         float angle = 40;
         for (int i = 0, x = 0; i < projectileCount; i++)
         {
-            print(transform.rotation.z);
             if (i == 0)
                 Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
             else if (i % 2 != 0)
