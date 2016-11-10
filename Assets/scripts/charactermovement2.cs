@@ -16,7 +16,6 @@ public class charactermovement2 : MonoBehaviour {
     public Weapon weapon2;
     public Weapon weapon3;
 
-
     // Use this for initialization
     void Start()
     {
@@ -43,9 +42,19 @@ public class charactermovement2 : MonoBehaviour {
             autoFire = !autoFire;
 
         if (autoFire)
+        {
+            activeWeapon.firing = true;
             activeWeapon.fire();
-        else if (Input.GetKey(KeyCode.Mouse0) || Input.GetAxis("rightJoystickVertical") != 0f || Input.GetAxis("rightJoystickHorizontal") != 0f)
+        }
+
+        else if (Input.GetKey(KeyCode.Mouse0) || Mathf.Abs(Input.GetAxis("rightJoystickVertical")) > 0.2f || Mathf.Abs(Input.GetAxis("rightJoystickHorizontal")) > 0.2f)
+        {
+            activeWeapon.firing = true;
             activeWeapon.fire();
+        }
+        else
+            activeWeapon.firing = false;
+
 
         float vertical = Input.GetAxis("vertical");
         float horizontal = Input.GetAxis("horizontal");

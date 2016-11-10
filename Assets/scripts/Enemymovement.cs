@@ -4,6 +4,7 @@ using System.Collections;
 public class Enemymovement : MonoBehaviour {
     private GameObject spiller;
     public Rigidbody rb;
+    public GameObject deathEffect;
     private SpriteRenderer sRendrer;
     public Transform enemylazerprefab;
     private float randomDistance;
@@ -21,25 +22,31 @@ public class Enemymovement : MonoBehaviour {
     public int health;
     public int maxHealth = 100;
     public bool isKamikaze = false;
+    public bool isTank = false;
     float randomrotation;
     public pickups[] pickups;
     // Use this for initialization
+    public GameObject deathsound;
+    public GameObject fire;
     void Start() {
-
         health = maxHealth;
         sRendrer = GetComponent<SpriteRenderer>();
         rotationSpeed = Random.Range(3.0f, 4.5f);
         randomDistance = Random.Range(3.0f, 7.0f);
         randomrotation = Random.Range(-10f, 10f);
-        randomShootspeed = Random.Range(2.0f, 4.0f);
-        StartCoroutine(Shoot(randomShootspeed));
+        randomShootspeed = Random.Range(5.0f, 10.0f);
         spiller = GameObject.FindGameObjectWithTag("Player");
+        LookAtPlayer();
+        distfinder();
+        StartCoroutine(Shoot(randomShootspeed));
     }
     IEnumerator flash(float time)
     {
         yield return new WaitForSeconds(time);
         if (isKamikaze)
             sRendrer.color = Color.yellow;
+        else if (isTank)
+            sRendrer.color = Color.green;
         else
             sRendrer.color = Color.red;
     }
@@ -80,12 +87,29 @@ public class Enemymovement : MonoBehaviour {
     }
     void dropPickup(pickups pickup)
     {
-        if(Random.Range(1, 15) == 1)
+        if(Random.Range(1, 25) == 1)
             Instantiate(pickup, gameObject.transform.position, gameObject.transform.rotation);
+    }
+
+    void Die()
+    {
+        if (!isTank || runtimes > 1)
+        {
+            Instantiate(deathsound);
+            Points.score++;
+            if (pickups.Length != 0)
+                dropPickup(pickups[Random.Range(0, pickups.Length)]);
+            GameObject effect = Instantiate(deathEffect, transform.position, deathEffect.transform.rotation) as GameObject;
+            effect.SetActive(true);
+            effect.transform.parent = null;
+            Destroy(effect, 0.5f);
+            Destroy(gameObject);
+        }
     }
     void normalEnemy() // Basic AI for basefienden
     {
-       
+        if (health <= 0)
+            Die();
         rotateAroundPlayer();
         if (dist.magnitude >= 10.0f)
             fart = 4.0f;
@@ -100,8 +124,16 @@ public class Enemymovement : MonoBehaviour {
             moveAway();
         }
     }
+    void Tank()
+    {
+        if (health <= 0 && runtimes == 0)
+            StartCoroutine(ShootManyOnce(9));
+        normalEnemy();
+    }
     void Kamikaze() // basic Ai for kamikaze fienden
-    {      
+    {
+        if (health <= 0)
+            Die();
         if (dist.magnitude >= 10.0f)
             fart = 4.0f;
         else
@@ -129,18 +161,13 @@ public class Enemymovement : MonoBehaviour {
     {
         LookAtPlayer();
         distfinder();
-        if (health <= 0)
-        {
-            Points.score++;
-            if(pickups.Length != 0)
-                dropPickup(pickups[Random.Range(0, pickups.Length)]);
-            Destroy(gameObject);
-        }
         if (isKamikaze)
-        {
             Kamikaze();
-        }
-        else normalEnemy();
+        else if (isTank)
+            Tank();
+        else
+            normalEnemy();
+        
 
 
     }
@@ -157,7 +184,7 @@ public class Enemymovement : MonoBehaviour {
         {
 			sRendrer.color = Color.white;
 			StartCoroutine (flash (0.2f));
-            gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;         
+            gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
         }
     }
     void OnCollisionEnter2D(Collision2D other)
@@ -171,18 +198,53 @@ public class Enemymovement : MonoBehaviour {
     }
     IEnumerator Shoot(float WaitTime)
     {
+        yield return new WaitForSeconds(WaitTime);
         if (Health.playerHealth != 0)
         {
+            GameObject effect = Instantiate(fire, transform.position, transform.rotation) as GameObject;
+            fire.SetActive(true);
+            fire.transform.parent = null;
             float angle = 10;
-            for (int i = 0; i < ProjectilesPerShot; i++)
+            for (int i = 0, x = 0; i < ProjectilesPerShot; i++)
             {
-                angle *= -1;
                 print(transform.rotation.z);
-                Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
+                if (i == 0)
+                    Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
+                else if (i % 2 != 0)
+                {
+                    x++;
+                    Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * angle))));
+                }
+                else
+                    Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * -angle))));
             }
         }
-        yield return new WaitForSeconds(WaitTime);
+        
         StartCoroutine(Shoot(randomShootspeed));
         
+    }
+    int runtimes = 0;
+    IEnumerator ShootManyOnce(int projectileCount)
+    {
+        runtimes++;
+        //gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        //gameObject.GetComponent<CircleCollider2D>().enabled = false;
+        float angle = 40;
+        for (int i = 0, x = 0; i < projectileCount; i++)
+        {
+            print(transform.rotation.z);
+            if (i == 0)
+                Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
+            else if (i % 2 != 0)
+            {
+                x++;
+                Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * angle))));
+            }
+            else
+                Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * -angle))));
+                yield return new WaitForEndOfFrame();
+        }
+        runtimes++;
+        yield break;
     }
 }

@@ -8,13 +8,13 @@ public class Wave_spawn : MonoBehaviour {
     private float yLimit = 7.5f;
     private float randomX;
     private float randomY;
-    private float spawnSpeed = 2.0f;
+    private float spawnSpeed = 1f; // var 2
     private GameObject randomEnemy;
     Vector3 spawnPoint = Vector3.zero;
     public Camera cam;
     Vector3 spawnInViewPort;
     private bool canSpawn = false;
-    public int maxEnemies = 20;
+    public int maxEnemies = 25;
     private int currentEnemies = 0;
     private int enemiesThisRound;
     private int enemiesTeller;
@@ -22,16 +22,18 @@ public class Wave_spawn : MonoBehaviour {
     public GameObject enemyPrefab2;
     public GameObject enemyPrefab3;
     public Weapon weapon;
+    int randomEnemyType;
 
     // Use this for initialization
     void Start () {
         
         waveNumber = 1;
-        enemiesThisRound = 10;
-        StartCoroutine(spawn(2f));
+        enemiesThisRound = 50; // 10
+        StartCoroutine(spawn(spawnSpeed));
         randomEnemy = enemyPrefab;
-        enemyPrefab.GetComponent<Enemymovement>().maxHealth = 100;
-        enemyPrefab2.GetComponent<Enemymovement>().maxHealth = 75;
+        enemyPrefab.GetComponent<Enemymovement>().maxHealth = 50;
+        enemyPrefab2.GetComponent<Enemymovement>().maxHealth = 50;
+        enemyPrefab3.GetComponent<Enemymovement>().maxHealth = 100;
 
     }
 	
@@ -40,19 +42,20 @@ public class Wave_spawn : MonoBehaviour {
 
         randomX = Random.Range(-xLimit, xLimit);
         randomY = Random.Range(-yLimit, yLimit);
-        if (randomEnemy == enemyPrefab)
-            randomEnemy = enemyPrefab2;
-        else if (randomEnemy == enemyPrefab2)
-            randomEnemy = enemyPrefab3;
-        else if (randomEnemy == enemyPrefab3)
+        randomEnemyType = Random.Range(1, 11);
+        if (randomEnemyType < 7)
             randomEnemy = enemyPrefab;
+        else if (randomEnemyType > 6 && randomEnemyType < 10)
+            randomEnemy = enemyPrefab2;
+        else if (randomEnemyType > 9)
+            randomEnemy = enemyPrefab3;
 
         spawnInViewPort = cam.WorldToViewportPoint(new Vector3(randomX, randomY, 0f));
         
 
         //print(spawnInViewPort.x + "    " + spawnInViewPort.y + "     " + spawnInViewPort.z);
-
-        if ((spawnInViewPort.x > 1f || spawnInViewPort.x < 0f) && (spawnInViewPort.y > 1f || spawnInViewPort.y < 0f))
+        
+        if ((spawnInViewPort.x > 1f || spawnInViewPort.x < 0f) || (spawnInViewPort.y > 1f || spawnInViewPort.y < 0f))
         {
             spawnPoint = new Vector3(randomX, randomY, 0f);
             canSpawn = true;
@@ -72,13 +75,14 @@ public class Wave_spawn : MonoBehaviour {
         print(spawnSpeed);
         waveNumber++;
         enemiesTeller = 0;
-        if(maxEnemies < 30)
-            maxEnemies = 10 + (waveNumber*3);
-        enemiesThisRound = 5 * waveNumber + 5;
-        enemyPrefab.GetComponent<Enemymovement>().maxHealth += 35;
-        enemyPrefab2.GetComponent<Enemymovement>().maxHealth += 20;
-        spawnSpeed -= 0.2f;
-        if (spawnSpeed < 0.35) spawnSpeed = 0.35f;       
+        if(maxEnemies < 50) // 30
+            maxEnemies += 5; //10
+        enemiesThisRound += 5 * waveNumber;
+        enemyPrefab.GetComponent<Enemymovement>().maxHealth += 15;
+        enemyPrefab2.GetComponent<Enemymovement>().maxHealth += 10;
+        enemyPrefab3.GetComponent<Enemymovement>().maxHealth += 25;
+        spawnSpeed -= 0.1f;
+        if (spawnSpeed < 0.25) spawnSpeed = 0.25f;       // 0.35 
     }
     IEnumerator spawn(float WaitTime)
     {
@@ -98,7 +102,14 @@ public class Wave_spawn : MonoBehaviour {
             canSpawn = false;
         }
         yield return new WaitForSeconds(WaitTime);
-        StartCoroutine(spawn(spawnSpeed));
+        if (currentEnemies > maxEnemies/2)
+            StartCoroutine(spawn(spawnSpeed*2));
+        else
+            StartCoroutine(spawn(spawnSpeed));
 
+    }
+    void OnDrawGizmos()
+    {
+        //Gizmos.DrawCube(spawnPoint, Vector3.one);
     }
 }

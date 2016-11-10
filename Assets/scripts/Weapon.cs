@@ -19,6 +19,8 @@ public class Weapon : MonoBehaviour {
     private int currentWave;
     private Vector3 size;
     public Wave_spawn wavespawn;
+    [HideInInspector]
+    public bool firing = false;
     
 
     [HideInInspector]
@@ -42,9 +44,10 @@ public class Weapon : MonoBehaviour {
 	
 
 	private bool canFire;
-
+    AudioSource audioSource;
 	// Use this for initialization
 	void Start () {
+        audioSource = GetComponent<AudioSource>();
         WeaponLevel = 1;
         currentWave = 1;
         size = Vector3.zero;
@@ -70,6 +73,8 @@ public class Weapon : MonoBehaviour {
     }
 	// Update is called once per frame
 	void Update () {
+        if (gameObject.name == "Flamethrower" && !firing)
+            audioSource.Stop();
         if (currentWave < wavespawn.waveNumber){
             currentWave = wavespawn.waveNumber;
             canLevelUp = true;
@@ -82,6 +87,11 @@ public class Weapon : MonoBehaviour {
 	public void fire(){
 		if (canFire == false)
 			return;
+        if (gameObject.name != "Flamethrower")
+            audioSource.PlayOneShot(audioSource.clip, 1f);
+        else if (firing && !audioSource.isPlaying)
+            audioSource.Play();
+
         for (int i = projectilesPerShot; i >= 1; i--)
         {
             newProjectile = Instantiate(projectile, firePoint.position, player.transform.rotation) as GameObject;
@@ -92,8 +102,8 @@ public class Weapon : MonoBehaviour {
     
     IEnumerator Cooldown(float fireDelay)
 	{
-		canFire = false;
+		canFire = false; 
 		yield return new WaitForSeconds(fireDelay);
-		canFire = true;
+        canFire = true;
 	}
 }
