@@ -77,6 +77,7 @@ public class charactermovement2 : MonoBehaviour {
         if (other.gameObject.tag == "enemy")
         {
             Health.playerHealth -= 3*shield;
+            other.gameObject.transform.parent.GetComponent<Enemymovement>().health = 0;
             other.gameObject.transform.parent.GetComponent<Enemymovement>().Die();
             Points.score--;
             Destroy(other.transform.parent.gameObject);

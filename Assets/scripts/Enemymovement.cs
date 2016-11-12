@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Enemymovement : MonoBehaviour {
-    private GameObject spiller;
+    private GameObject target;
     public Rigidbody rb;
     public GameObject deathEffect;
     private SpriteRenderer sRendrer;
@@ -18,7 +18,7 @@ public class Enemymovement : MonoBehaviour {
     public Vector3 dist;
     public Vector3 Rad;
     public float disty;
-    [HideInInspector]
+    //[HideInInspector]
     public int health;
     public int maxHealth = 100;
     public bool isKamikaze = false;
@@ -28,15 +28,18 @@ public class Enemymovement : MonoBehaviour {
     // Use this for initialization
     public GameObject deathsound;
     public GameObject fire;
+    GameObject spiller;
+
     void Start() {
+        spiller = GameObject.FindGameObjectWithTag("Player");
         health = maxHealth;
         sRendrer = GetComponent<SpriteRenderer>();
         rotationSpeed = Random.Range(3.0f, 4.5f);
         randomDistance = Random.Range(3.0f, 7.0f);
         randomrotation = Random.Range(-10f, 10f);
         randomShootspeed = Random.Range(5.0f, 10.0f);
-        spiller = GameObject.FindGameObjectWithTag("Player");
-        LookAtPlayer();
+        target = GameObject.FindGameObjectWithTag("Player");
+        LookAtTarget(target);
         distfinder();
         StartCoroutine(Shoot(randomShootspeed));
     }
@@ -62,18 +65,17 @@ public class Enemymovement : MonoBehaviour {
     {
         gameObject.transform.position = Vector2.MoveTowards(gameObject.transform.position, spiller.transform.position, Time.deltaTime * -fart);
     }
-    void rotateAroundPlayer()
+    void rotateAroundPlayer(GameObject target)
     {
         if (randomrotation > 0)
-            transform.RotateAround(spiller.transform.position, Vector3.forward, 5 * rotationSpeed * Time.deltaTime);
+            transform.RotateAround(target.transform.position, Vector3.forward, 5 * rotationSpeed * Time.deltaTime);
         else
-            transform.RotateAround(spiller.transform.position, Vector3.back, 5 * rotationSpeed * Time.deltaTime);
+            transform.RotateAround(target.transform.position, Vector3.back, 5 * rotationSpeed * Time.deltaTime);
     }
-    void LookAtPlayer()
+    void LookAtTarget(GameObject target)
     {
         Vector3 enemyToPlayer = new Vector3(0f, 0f, 0f);
-        GameObject body2D = GameObject.FindGameObjectWithTag("Player");
-        enemyToPlayer = body2D.transform.position - transform.position;
+        enemyToPlayer = target.transform.position - transform.position;
         float angle = Mathf.Sqrt((enemyToPlayer.x * enemyToPlayer.x) + (enemyToPlayer.y * enemyToPlayer.y));
         angle = Mathf.Atan2(enemyToPlayer.x, enemyToPlayer.y);
         if (angle < 0)
@@ -93,7 +95,7 @@ public class Enemymovement : MonoBehaviour {
 
     public void Die()
     {
-        if (!isTank || runtimes > 1)
+        if ((!isTank || runtimes > 1) && health <= 0)
         {
             Instantiate(deathsound);
             Points.score++;
@@ -108,9 +110,9 @@ public class Enemymovement : MonoBehaviour {
     }
     void normalEnemy() // Basic AI for basefienden
     {
-        if (health <= 0)
-            Die();
-        rotateAroundPlayer();
+       // if (health <= 0)
+       //     Die();
+        rotateAroundPlayer(target);
         if (dist.magnitude >= 10.0f)
             fart = 4.0f;
         else
@@ -140,7 +142,7 @@ public class Enemymovement : MonoBehaviour {
             fart = 2.0f;
         if (health >= (int)maxHealth / 2)
         {
-            rotateAroundPlayer();
+            rotateAroundPlayer(target);
             if (dist.magnitude >= randomDistance + (moveDeadZone/2)) 
             {
                 moveTowards();
@@ -159,8 +161,15 @@ public class Enemymovement : MonoBehaviour {
     // Update is called once per frame
     void FixedUpdate()
     {
-        LookAtPlayer();
-        distfinder();
+        if (health <= 0)
+            Die();
+        if (target == null)
+            target = spiller;
+        if (health > 0)
+        {
+            LookAtTarget(target);
+            distfinder();
+        }
         if (isKamikaze)
             Kamikaze();
         else if (isTank)
@@ -185,6 +194,9 @@ public class Enemymovement : MonoBehaviour {
 			sRendrer.color = Color.white;
 			StartCoroutine (flash (0.2f));
             gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+            //target = other.gameObject;
+            //LookAtTarget(target);
+            //Die();
         }
     }
     void OnCollisionEnter2D(Collision2D other)
@@ -194,6 +206,9 @@ public class Enemymovement : MonoBehaviour {
             sRendrer.color = Color.white;
             StartCoroutine(flash(0.2f));
             gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+            //target = other.gameObject;
+            //LookAtTarget(target);
+            //Die();
         }
     }
     IEnumerator Shoot(float WaitTime)

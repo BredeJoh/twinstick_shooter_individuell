@@ -75,7 +75,7 @@ public class Weapon : MonoBehaviour {
     }
 	// Update is called once per frame
 	void Update () {
-        if (gameObject.name == "Flamethrower" && !firing)
+        if (gameObject.name == "Flamethrower" && (!firing || gameObject.GetComponent<Weapon>() != player.activeWeapon))
             audioSource.Stop();
         if (currentWave < wavespawn.waveNumber){
             currentWave = wavespawn.waveNumber;
