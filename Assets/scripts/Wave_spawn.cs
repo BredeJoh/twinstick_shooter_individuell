@@ -67,12 +67,10 @@ public class Wave_spawn : MonoBehaviour {
         if (enemiesTeller == enemiesThisRound && currentEnemies == 0)
         {
             nextWave();
-            print(waveNumber);
         }
 	}
     void nextWave()
     {
-        print(spawnSpeed);
         waveNumber++;
         enemiesTeller = 0;
         if(maxEnemies < 50) // 30
