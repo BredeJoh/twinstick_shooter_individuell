@@ -8,6 +8,7 @@ public class highscores : MonoBehaviour {
     private string playerName;
 	// Use this for initialization
 	void Start () {
+        
         playerName = PlayerPrefs.GetString("PlayerName");
         PlayerPrefs.SetInt("highscore" + 0, 0);
         if (PlayerPrefs.GetInt("highscore" + 0) == 0)
@@ -35,12 +36,20 @@ public class highscores : MonoBehaviour {
             PlayerPrefs.Save();
         }
         UpdateText();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
+        }
     }
 	
 	// Update is called once per frame
 	void Update () {
 	    if (Health.playerHealth <= 0 && Points.score > 0)
         {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(true);
+            }
             SetHighScore(Points.score, playerName);
             UpdateText();
             Points.score = 0;
