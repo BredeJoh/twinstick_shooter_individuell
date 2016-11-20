@@ -20,6 +20,7 @@ public class Enemymovement : MonoBehaviour {
     public float disty;
     //[HideInInspector]
     public int health;
+    public int killValue;
     public int maxHealth = 100;
     public bool isKamikaze = false;
     public bool isTank = false;
@@ -98,7 +99,8 @@ public class Enemymovement : MonoBehaviour {
         if ((!isTank || runtimes > 1) && health <= 0)
         {
             Instantiate(deathsound);
-            Points.score++;
+            Points.score += killValue * Points.combo;
+            Points.combo++;
             if (pickups.Length != 0)
                 dropPickup(pickups[Random.Range(0, pickups.Length)]);
             GameObject effect = Instantiate(deathEffect, transform.position, deathEffect.transform.rotation) as GameObject;
@@ -214,7 +216,7 @@ public class Enemymovement : MonoBehaviour {
     IEnumerator Shoot(float WaitTime)
     {
         yield return new WaitForSeconds(WaitTime);
-        if (Health.playerHealth != 0)
+        if (Health.playerHealth > 0)
         {
             GameObject effect = Instantiate(fire, transform.position, transform.rotation) as GameObject;
             fire.SetActive(true);

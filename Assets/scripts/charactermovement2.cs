@@ -73,13 +73,15 @@ public class charactermovement2 : MonoBehaviour {
         if (other.gameObject.tag == "enemylazer")
         {
             Health.playerHealth -= 1*shield;
+            Points.combo = 1;
         }
         if (other.gameObject.tag == "enemy")
         {
             Health.playerHealth -= 3*shield;
             other.gameObject.transform.parent.GetComponent<Enemymovement>().health = 0;
             other.gameObject.transform.parent.GetComponent<Enemymovement>().Die();
-            Points.score--;
+            Points.score -= other.transform.parent.GetComponent<Enemymovement>().killValue * (Points.combo-1);
+            Points.combo = 1;
             Destroy(other.transform.parent.gameObject);
         }
         if (Health.playerHealth <= 0)
