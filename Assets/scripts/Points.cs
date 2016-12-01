@@ -25,7 +25,7 @@ public class Points : MonoBehaviour {
             internalCombo = combo;
         }
         if (comboTimer.GetComponent<Image>().fillAmount > 0 && combo > 1)
-            comboTimer.GetComponent<Image>().fillAmount -= Time.deltaTime/1.75f;
+            comboTimer.GetComponent<Image>().fillAmount -= Time.deltaTime/2f;
         else
             combo = 1;
             
