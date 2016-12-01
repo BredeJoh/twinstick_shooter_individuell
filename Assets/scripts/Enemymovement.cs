@@ -218,7 +218,7 @@ public class Enemymovement : MonoBehaviour {
         if (Health.playerHealth > 0)
         {
             Vector3 InViewPort = cam.WorldToViewportPoint(transform.position);
-            if ((InViewPort.x > 1f || InViewPort.x < 0f) || (InViewPort.y > 1f || InViewPort.y < 0f))
+            if ((InViewPort.x < 1f || InViewPort.x > 0f) || (InViewPort.y < 1f || InViewPort.y > 0f))
             {
                 GameObject effect = Instantiate(fire, transform.position, transform.rotation) as GameObject;
                 fire.SetActive(true);

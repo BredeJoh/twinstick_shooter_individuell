@@ -35,15 +35,11 @@ public class highscores : MonoBehaviour {
             PlayerPrefs.Save();
         }
         UpdateText();
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            transform.GetChild(i).gameObject.SetActive(false);
-        }
     }
 	
 	// Update is called once per frame
 	void Update () {
-	    if (Health.playerHealth <= 0 && Points.score > 0)
+	    if ((Health.playerHealth <= 0))
         {
             for (int i = 0; i < transform.childCount; i++)
             {
