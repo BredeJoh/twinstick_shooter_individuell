@@ -26,7 +26,6 @@ public class Wave_spawn : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        
         waveNumber = 1;
         enemiesThisRound = 20; // 50
         StartCoroutine(spawn(spawnSpeed));
@@ -34,7 +33,6 @@ public class Wave_spawn : MonoBehaviour {
         enemyPrefab.GetComponent<Enemymovement>().maxHealth = 50;
         enemyPrefab2.GetComponent<Enemymovement>().maxHealth = 50;
         enemyPrefab3.GetComponent<Enemymovement>().maxHealth = 100;
-
     }
 	
 	// Update is called once per frame
@@ -62,8 +60,7 @@ public class Wave_spawn : MonoBehaviour {
             
         }
         currentEnemies = gameObject.transform.childCount;
-        
-
+       
         if (enemiesTeller == enemiesThisRound && currentEnemies == 0)
         {
             nextWave();
@@ -76,11 +73,17 @@ public class Wave_spawn : MonoBehaviour {
         if(maxEnemies < 50) // 30
             maxEnemies += 5; //10
         enemiesThisRound += 5 * waveNumber;
-        enemyPrefab.GetComponent<Enemymovement>().maxHealth += 15;
-        enemyPrefab2.GetComponent<Enemymovement>().maxHealth += 10;
-        enemyPrefab3.GetComponent<Enemymovement>().maxHealth += 25;
+        enemyPrefab.GetComponent<Enemymovement>().maxHealth += 20;
+        enemyPrefab2.GetComponent<Enemymovement>().maxHealth += 15;
+        enemyPrefab3.GetComponent<Enemymovement>().maxHealth += 35;
         spawnSpeed -= 0.1f;
         if (spawnSpeed < 0.25) spawnSpeed = 0.25f;       // 0.35 
+        if (waveNumber >= 10)
+        {
+            enemyPrefab.GetComponent<Enemymovement>().maxHealth += 20;
+            enemyPrefab2.GetComponent<Enemymovement>().maxHealth += 15;
+            enemyPrefab3.GetComponent<Enemymovement>().maxHealth += 35;
+        }
     }
     IEnumerator spawn(float WaitTime)
     {
@@ -100,8 +103,8 @@ public class Wave_spawn : MonoBehaviour {
             canSpawn = false;
         }
         yield return new WaitForSeconds(WaitTime);
-        if (currentEnemies > maxEnemies/1.5f)
-            StartCoroutine(spawn(spawnSpeed*1.5f));
+        if (currentEnemies > maxEnemies/1.3f)
+            StartCoroutine(spawn(spawnSpeed*1.4f));
         else
             StartCoroutine(spawn(spawnSpeed));
 

@@ -11,13 +11,15 @@ public class Projectile : MonoBehaviour {
 	private float lifetime;
     [HideInInspector]
     public int damage;
+    public GameObject smallClone;
+
 
     Vector3 playerVector;
     Vector3 velocity;
 
     // Use this for initialization
     void Start () {
-
+        smallClone = gameObject;
 		player = FindObjectOfType<charactermovement2> ();
         
 		spread = player.activeWeapon.spread / 100;
@@ -33,9 +35,9 @@ public class Projectile : MonoBehaviour {
 		aimPos.y -= playerPos.y;
 
 		float angle = Mathf.Atan2 (aimPos.y, aimPos.x);
-		//Debug.Log (angle);
+
 		angle += Random.Range (-spread, spread);
-		//Debug.Log (angle);
+
 
 		float xVelocity = projectileSpeed * Mathf.Cos (angle);
 		float yVelocity = projectileSpeed * Mathf.Sin (angle);
@@ -97,7 +99,10 @@ public class Projectile : MonoBehaviour {
 			else
 				other.gameObject.GetComponent<KamikazeScript> ().health -= damage * charactermovement2.damageMultiplyer;
             if(player.activeWeapon.name != "Rifle" || other.gameObject.GetComponent<Enemymovement>().health > 0)
-            Destroy(gameObject);
+            {
+                Destroy(gameObject);
+            }
+            
         }
     }
 

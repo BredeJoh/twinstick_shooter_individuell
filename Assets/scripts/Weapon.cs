@@ -71,6 +71,8 @@ public class Weapon : MonoBehaviour {
                 levelupText.text += "Projectiles bounce on walls \n";
             if (weaponname == "Flamethrower")
                 levelupText.text += "flame penetrates walls \n";
+            if (weaponname == "Rifle")
+                levelupText.text += "huge damage increase \n";
         }
         if (spreadPerLevel > 0f)
             levelupText.text += "+ Spread \n";

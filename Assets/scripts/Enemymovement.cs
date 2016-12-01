@@ -6,6 +6,7 @@ public class Enemymovement : MonoBehaviour {
     private GameObject target;
     public Rigidbody rb;
     public GameObject deathEffect;
+    public GameObject shootEffect;
     private SpriteRenderer sRendrer;
     public Transform enemylazerprefab;
     private float randomDistance;
@@ -38,7 +39,7 @@ public class Enemymovement : MonoBehaviour {
         health = maxHealth;
         sRendrer = GetComponent<SpriteRenderer>();
         rotationSpeed = Random.Range(3.0f, 4.5f);
-        randomDistance = Random.Range(3.0f, 7.0f);
+        randomDistance = Random.Range(2.0f, 7.0f);
         randomrotation = Random.Range(-10f, 10f);
         randomShootspeed = Random.Range(5.0f, 10.0f);
         target = GameObject.FindGameObjectWithTag("Player");
@@ -195,9 +196,6 @@ public class Enemymovement : MonoBehaviour {
 			sRendrer.color = Color.white;
 			StartCoroutine (flash (0.2f));
             gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-            //target = other.gameObject;
-            //LookAtTarget(target);
-            //Die();
         }
     }
     void OnCollisionEnter2D(Collision2D other)
@@ -207,38 +205,50 @@ public class Enemymovement : MonoBehaviour {
             sRendrer.color = Color.white;
             StartCoroutine(flash(0.2f));
             gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-            //target = other.gameObject;
-            //LookAtTarget(target);
-            //Die();
+        }
+        if (other.gameObject.tag == "Boarder" || other.gameObject.tag == "Wall" || other.gameObject.tag == "enemy")
+        {
+            randomrotation *= -1;
         }
     }
+    float particleTime = 1.25f;
     IEnumerator Shoot(float WaitTime)
     {
-        yield return new WaitForSeconds(WaitTime);
-        if (Health.playerHealth > 0)
+        yield return new WaitForSeconds(WaitTime- particleTime);
+        shootEffect.SetActive(true);
+        Vector3 InViewPort = cam.WorldToViewportPoint(transform.position);
+        if ((InViewPort.x < 1f || InViewPort.x > 0f) || (InViewPort.y < 1f || InViewPort.y > 0f))
         {
-            Vector3 InViewPort = cam.WorldToViewportPoint(transform.position);
-            if ((InViewPort.x < 1f || InViewPort.x > 0f) || (InViewPort.y < 1f || InViewPort.y > 0f))
-            {
-                GameObject effect = Instantiate(fire, transform.position, transform.rotation) as GameObject;
-                fire.SetActive(true);
-                fire.transform.parent = null;
-                float angle = 10;
-                for (int i = 0, x = 0; i < ProjectilesPerShot; i++)
-                {
-                    if (i == 0)
+                yield return new WaitForSeconds(particleTime);
+                shootEffect.SetActive(false);
+                if (Health.playerHealth > 0)
+                {       
+                     GameObject effect = Instantiate(fire, transform.position, transform.rotation) as GameObject;
+                     fire.SetActive(true);
+                     fire.transform.parent = null;
+                     float angle = 10;
+                     for (int i = 0, x = 0; i < ProjectilesPerShot; i++)
+                     {
+                          if (i == 0)
                         Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
-                    else if (i % 2 != 0)
-                    {
-                        x++;
-                        Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * angle))));
-                    }
-                    else
-                        Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * -angle))));
-                }
-            }
-            else StartCoroutine(Shoot(1f));
-        }       
+                          else if (i % 2 != 0)
+                          {
+                               x++;
+                              Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * angle))));
+                          }
+                          else
+                              Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * -angle))));
+                      }
+              }
+            
+                
+        }
+        else
+        {
+            shootEffect.SetActive(false);
+            StartCoroutine(Shoot(particleTime));
+            yield break;
+        }
         StartCoroutine(Shoot(randomShootspeed));      
     }
     int runtimes = 0;
