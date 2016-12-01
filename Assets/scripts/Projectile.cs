@@ -4,7 +4,8 @@ using System.Collections;
 public class Projectile : MonoBehaviour {
 
 	private charactermovement2 player;
-
+    [HideInInspector]
+    public Weapon AssosiatedWeapon;
 	private float spread;
 	private float projectileSpeed;
 	private float lifetime;
@@ -63,22 +64,28 @@ public class Projectile : MonoBehaviour {
             Physics2D.IgnoreCollision(other.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
             Physics2D.GetIgnoreLayerCollision(9, 10);
         }
+
         if (other.gameObject.tag == "Boarder")
             Destroy(gameObject);
+
         if (other.gameObject.tag == "lazer")
         {
             Physics2D.GetIgnoreLayerCollision(9, 9);
             Physics2D.IgnoreCollision(other.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
         }
+
         if (other.gameObject.tag == "Wall") { 
-            foreach (ContactPoint2D contact in other.contacts)
+            if (AssosiatedWeapon.WeaponLevel >= 5 || AssosiatedWeapon.weaponname == "Rifle")
             {
-                Vector3 normal = contact.normal;
-                //Vector3 movement = GetComponent<Rigidbody2D>().velocity;
-                velocity = Vector3.Reflect(velocity, normal);
-               // GetComponent<Rigidbody2D>().velocity = movement;
-            }      
+                foreach (ContactPoint2D contact in other.contacts)
+                {
+                    Vector3 normal = contact.normal;
+                    velocity = Vector3.Reflect(velocity, normal);
+                }
+            }
+            else Destroy(gameObject);
         }
+    
         if (other.gameObject.tag == "enemy")
         {
 			if (other.gameObject.GetComponent<Enemymovement> () != null)
@@ -89,6 +96,7 @@ public class Projectile : MonoBehaviour {
             Destroy(gameObject);
         }
     }
+
     void OnTriggerEnter2D(Collider2D other)
 	{
 		if (other.gameObject.tag == "enemy")
@@ -99,8 +107,9 @@ public class Projectile : MonoBehaviour {
 				other.gameObject.GetComponent<KamikazeScript> ().health -= damage;
             Destroy(gameObject);
 		}
-        
-        
-
+        if(other.gameObject.tag == "Wall" && AssosiatedWeapon.WeaponLevel < 5)
+        {
+            Destroy(gameObject);
+        }
     }
 }

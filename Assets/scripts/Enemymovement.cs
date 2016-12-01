@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class Enemymovement : MonoBehaviour {
+    private Camera cam;
     private GameObject target;
     public Rigidbody rb;
     public GameObject deathEffect;
@@ -32,6 +33,7 @@ public class Enemymovement : MonoBehaviour {
     GameObject spiller;
 
     void Start() {
+        cam = GameObject.FindObjectOfType<Camera>();
         spiller = GameObject.FindGameObjectWithTag("Player");
         health = maxHealth;
         sRendrer = GetComponent<SpriteRenderer>();
@@ -162,7 +164,7 @@ public class Enemymovement : MonoBehaviour {
     }
     // Update is called once per frame
     void FixedUpdate()
-    {
+    { 
         if (health <= 0)
             Die();
         if (target == null)
@@ -178,9 +180,6 @@ public class Enemymovement : MonoBehaviour {
             Tank();
         else
             normalEnemy();
-        
-
-
     }
     void OnTriggerExit2D(Collider2D other)
     {
@@ -218,27 +217,29 @@ public class Enemymovement : MonoBehaviour {
         yield return new WaitForSeconds(WaitTime);
         if (Health.playerHealth > 0)
         {
-            GameObject effect = Instantiate(fire, transform.position, transform.rotation) as GameObject;
-            fire.SetActive(true);
-            fire.transform.parent = null;
-            float angle = 10;
-            for (int i = 0, x = 0; i < ProjectilesPerShot; i++)
+            Vector3 InViewPort = cam.WorldToViewportPoint(transform.position);
+            if ((InViewPort.x > 1f || InViewPort.x < 0f) || (InViewPort.y > 1f || InViewPort.y < 0f))
             {
-                
-                if (i == 0)
-                    Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
-                else if (i % 2 != 0)
+                GameObject effect = Instantiate(fire, transform.position, transform.rotation) as GameObject;
+                fire.SetActive(true);
+                fire.transform.parent = null;
+                float angle = 10;
+                for (int i = 0, x = 0; i < ProjectilesPerShot; i++)
                 {
-                    x++;
-                    Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * angle))));
+                    if (i == 0)
+                        Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (i * angle))));
+                    else if (i % 2 != 0)
+                    {
+                        x++;
+                        Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * angle))));
+                    }
+                    else
+                        Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * -angle))));
                 }
-                else
-                    Instantiate(enemylazerprefab, firepoint.transform.position, Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, transform.eulerAngles.z + (x * -angle))));
             }
-        }
-        
-        StartCoroutine(Shoot(randomShootspeed));
-        
+            else StartCoroutine(Shoot(1f));
+        }       
+        StartCoroutine(Shoot(randomShootspeed));      
     }
     int runtimes = 0;
     IEnumerator ShootManyOnce(int projectileCount)
