@@ -27,8 +27,8 @@ public class pickups : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-	
-	}
+        StartCoroutine(perish());
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -70,5 +70,10 @@ public class pickups : MonoBehaviour {
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
         }
         
+    }
+    IEnumerator perish()
+    {
+        yield return new WaitForSeconds(7.5f);
+        Destroy(gameObject);
     }
 }
