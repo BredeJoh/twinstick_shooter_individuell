@@ -74,6 +74,9 @@ public class pickups : MonoBehaviour {
     IEnumerator perish()
     {
         yield return new WaitForSeconds(7.5f);
+        gameObject.GetComponent<BoxCollider>().enabled = false;
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        yield return new WaitForSeconds(BonusTime + 1f);
         Destroy(gameObject);
     }
 }
