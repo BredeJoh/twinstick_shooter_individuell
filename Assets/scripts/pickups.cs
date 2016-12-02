@@ -19,7 +19,10 @@ public class pickups : MonoBehaviour {
     [Range(1, 5)]
     public int fireRateMultiplier;
     public bool invincibility = false;
+    public bool isBomb = false;
+    public GameObject explotion;
     private GameObject player;
+    GameObject bomb;
 
 
     // Use this for initialization
@@ -33,6 +36,8 @@ public class pickups : MonoBehaviour {
 	}
     IEnumerator isPickedUpReset(float waitTime)
     {
+        if (isBomb)
+           bomb = Instantiate(explotion, transform.position, transform.rotation) as GameObject;
         Health.maxPlayerHealth += MaxHealthIncrease;
         Health.playerHealth += HealthIncrease;
         charactermovement2.damageMultiplyer *= DamageIncrease;
@@ -45,6 +50,7 @@ public class pickups : MonoBehaviour {
 
         yield return new WaitForSeconds(waitTime);
 
+        Destroy(bomb);
         charactermovement2.damageMultiplyer /= DamageIncrease;
         player.GetComponent<charactermovement2>().speed -= speedIncrease;
         player.GetComponent<charactermovement2>().weapon1.fireDelay *= fireRateMultiplier;

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Wave_spawn : MonoBehaviour {
 
-    public int waveNumber = 0;
+    static public int waveNumber = 0;
     private float xLimit = 15f;
     private float yLimit = 7.5f;
     private float randomX;

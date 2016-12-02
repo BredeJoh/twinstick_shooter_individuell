@@ -19,7 +19,11 @@ public class Points : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (internalCombo != combo)
+        if (combo == 1)
+        {
+            comboTimer.GetComponent<Image>().fillAmount = 0f;
+        }
+        else if (internalCombo != combo)
         {
             comboTimer.GetComponent<Image>().fillAmount = 1f;
             internalCombo = combo;

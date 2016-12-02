@@ -111,8 +111,8 @@ public class Weapon : MonoBehaviour {
         weaponname = gameObject.name;
         if (gameObject.name == "Flamethrower" && (!firing || gameObject.GetComponent<Weapon>() != player.activeWeapon))
             audioSource.Stop();
-        if (currentWave < wavespawn.waveNumber){
-            currentWave = wavespawn.waveNumber;
+        if (currentWave < Wave_spawn.waveNumber){
+            currentWave = Wave_spawn.waveNumber;
             canLevelUp = true;
         }
 

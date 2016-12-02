@@ -93,7 +93,7 @@ public class Enemymovement : MonoBehaviour {
     }
     void dropPickup(pickups pickup)
     {
-        if(Random.Range(1, 25) == 1)
+        if(Random.Range(1, 20 + Wave_spawn.waveNumber*3) == 1)
             Instantiate(pickup, gameObject.transform.position, gameObject.transform.rotation);
     }
 
@@ -211,7 +211,17 @@ public class Enemymovement : MonoBehaviour {
             randomrotation *= -1;
         }
     }
-    float particleTime = 1.25f;
+    void OnParticleCollision(GameObject other)
+    {
+        if (other.gameObject.tag == "lazer")
+        {
+            Points.combo = 1;
+            health = 0;
+        }
+
+        
+    }
+        float particleTime = 1.25f;
     IEnumerator Shoot(float WaitTime)
     {
         yield return new WaitForSeconds(WaitTime- particleTime);

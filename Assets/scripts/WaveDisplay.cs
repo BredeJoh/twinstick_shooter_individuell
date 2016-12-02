@@ -19,7 +19,7 @@ public class WaveDisplay : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		WavePlayerDisplay(wavespawn.waveNumber);
+		WavePlayerDisplay(Wave_spawn.waveNumber);
 	}
 		
 	//changes wave number in the pause menu so the player can see which wave they are on
