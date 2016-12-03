@@ -46,10 +46,11 @@ public class highscores : MonoBehaviour {
                 transform.GetChild(i).gameObject.SetActive(true);
             }
             SetHighScore(Points.score, playerName);
-            UpdateText();
+            
             Points.score = 0;
         }
-	}
+        UpdateText();
+    }
     void SetHighScore(int score, string name)
     {
         for (int i = 0; i < 10; i++)
