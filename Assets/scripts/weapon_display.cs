@@ -38,10 +38,10 @@ public class weapon_display : MonoBehaviour {
                 buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
             else
                 buttons[i].GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.3f);
-            if(Weapon.canLevelUp == true)
-            {
-                buttons[i].GetComponent<Image>().color = new Color(0f, 1f, 0f, 1f);
-            }
+          //  if(Weapon.canLevelUp == true)
+          //  {
+          //      buttons[i].GetComponent<Image>().color = new Color(0f, 1f, 0f, 1f);
+          //  }
         }      
 	}
     void TextChange()

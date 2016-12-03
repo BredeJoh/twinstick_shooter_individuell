@@ -115,9 +115,12 @@ public class Weapon : MonoBehaviour {
             currentWave = Wave_spawn.waveNumber;
             canLevelUp = true;
         }
-
+        if (canLevelUp)
+        {
+            levelupText.text = "Weapon upgrade ready \n"+"Press RB to upgrade selected \n"+"weapon";
+        }
         if (canLevelUp && Input.GetButtonDown(LevelUpButton))       
-            LevelUp();     
+            player.activeWeapon.LevelUp();     
 	}
     
 	public void fire(){
