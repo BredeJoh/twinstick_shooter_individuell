@@ -42,8 +42,8 @@ public class nameChange : MonoBehaviour
     }
     public void ResetScores()
     {
-        PlayerPrefs.SetInt("highscore" + 0, 100000);
-        PlayerPrefs.SetInt("highscore" + 1, 50000);
+        PlayerPrefs.SetInt("highscore" + 0, 50000);
+        PlayerPrefs.SetInt("highscore" + 1, 30000);
         PlayerPrefs.SetInt("highscore" + 2, 25000);
         PlayerPrefs.SetInt("highscore" + 3, 10000);
         PlayerPrefs.SetInt("highscore" + 4, 7500);
